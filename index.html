@@ -46,5 +46,20 @@
 
     <p style="margin-top:25px;color:#475569;font-size:12px">codecaiman.github.io/Portafolio/</p>
   </div>
+ <button id="caimanBtn" style="margin-top:15px;background:#3b82f6;border:0;color:white;padding:10px 20px;border-radius:10px;width:100%;font-weight:bold">👋 Hazme click</button>
+<p id="mensaje" style="margin-top:10px;color:#22c55e;font-weight:bold"></p>
+
+<script>
+  let clicks = 0;
+  const btn = document.getElementById('caimanBtn');
+  const msg = document.getElementById('mensaje');
+  
+  btn.addEventListener('click', () => {
+    clicks++;
+    if(clicks === 1) msg.innerText = "¡Boom! Tu primer JS funcionando 🐊";
+    else if(clicks === 2) msg.innerText = "2 clicks, ya eres dev interactivo";
+    else msg.innerText = `Llevas ${clicks} clicks. ¡Ya dominas JS básico!`;
+  });
+</script>
 </body>
 </html>
