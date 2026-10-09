@@ -3,41 +3,67 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CodeCaiman 🐊 | Portafolio</title>
+<title>CodeCaiman 🐊 | Dev de Actopan</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-  body { font-family: -apple-system, sans-serif; background:#f4f4f5; color:#111; padding:20px; transition:0.3s; max-width:600px; margin:auto; }
-  .card { background:white; padding:24px; border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,0.1); margin-top:20px; }
-  .dark-mode { background:#111 !important; color:#eee !important; }
-  .dark-mode .card { background:#1e1e1e !important; color:#eee !important; }
-  .btn { display:block; width:100%; padding:14px; border-radius:12px; border:0; font-weight:bold; text-align:center; text-decoration:none; margin-top:12px; cursor:pointer; }
-  .btn-wa { background:#25D366; color:white; }
-  .btn-dark { background:#111; color:white; }
-  .dark-mode .btn-dark { background:#eee; color:#111; }
-  .counter { text-align:center; margin-top:15px; font-size:14px; opacity:0.7; }
+  :root { --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --accent:#22c55e; }
+    * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter', sans-serif; background:var(--bg); color:var(--text); transition:0.4s; padding:20px; }
+  body.dark { --bg:#020617; --card:#0f172a; --text:#f1f5f9; }
+  
+  .container { max-width:650px; margin:auto; }
+  .card { background:var(--card); padding:28px; border-radius:24px; box-shadow:0 10px 40px rgba(0,0,0,0.08); margin-top:20px; border:1px solid rgba(0,0,0,0.05); animation: floatUp 0.6s ease; }
+  @keyframes floatUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  
+  h1 { font-size:32px; font-weight:900; letter-spacing:-1px; }
+  .tag { background:#dcfce7; color:#166534; padding:6px 12px; border-radius:99px; font-size:12px; font-weight:700; display:inline-block; margin-top:8px; }
+  body.dark .tag { background:#14532d; color:#bbf7d0; }
+  
+  .skills { display:flex; gap:8px; flex-wrap:wrap; margin-top:16px; }
+  .skill { background:var(--bg); border:1px solid rgba(0,0,0,0.1); padding:8px 14px; border-radius:10px; font-size:13px; font-weight:700; }
+  
+  .btn { display:block; width:100%; padding:16px; border-radius:14px; border:0; font-weight:800; text-align:center; text-decoration:none; margin-top:14px; cursor:pointer; transition:0.2s; }
+  .btn:hover { transform:scale(1.02); }
+  .btn-wa { background:#22c55e; color:white; box-shadow:0 8px 20px rgba(34,197,94,0.3); }
+  .btn-dark { background:var(--text); color:var(--card); }
+  
+  .repo { background:var(--bg); padding:16px; border-radius:16px; margin-top:12px; border:1px solid rgba(0,0,0,0.05); transition:0.2s; }
+  .repo:hover { transform:translateX(4px); border-color:var(--accent); }
+  .repo b { color:var(--accent); }
+  
+  .counter { text-align:center; margin-top:16px; font-size:13px; opacity:0.5; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
 </style>
 </head>
 <body>
 
-<div class="card">
-  <h1>CodeCaiman 🐊</h1>
-  <p>Desarrollador Web | De Actopan para el mundo.</p>
-  <p>Portafolio V4 - Con API</p>
-  <a id="btn-wa" class="btn btn-wa" href="https://wa.me/527787965432?text=Hola%20Caiman%20vi%20tu%20portafolio%20🐊" target="_blank">WhatsApp Directo</a>
-  <button id="btn-dark" class="btn btn-dark">🌙 Modo Oscuro</button>
-  <div class="counter">Has hecho <span id="count">0</span> clicks en mi portafolio</div>
-</div>
+<div class="container">
+  <div class="card">
+    <h1>CodeCaiman 🐊</h1>
+    <p style="opacity:0.7; margin-top:6px;">Desarrollador Web | De Actopan para el mundo.</p>
+    <span class="tag">● Disponible para proyectos</span>
+    
+    <div class="skills">
+      <div class="skill">HTML5</div>
+      <div class="skill">CSS3</div>
+      <div class="skill">JavaScript</div>
+      <div class="skill">GitHub API</div>
+    </div>
 
-<div class="card" id="proyectos">
-  <h2>🔴 Proyectos en vivo desde GitHub</h2>
-  <div id="lista-repos">Cargando proyectos...</div>
+    <a class="btn btn-wa" href="https://wa.me/527787965432?text=Hola%20Caiman%20vi%20tu%20V5%20y%20esta%20pro%20🐊" target="_blank">WhatsApp Directo</a>
+    <button id="btn-dark" class="btn btn-dark">🌙 Modo Oscuro</button>
+    <div class="counter">Has hecho <span id="count">0</span> clicks en mi portafolio</div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-size:18px;">🔴 Proyectos en vivo</h2>
+    <div id="lista-repos">Cargando proyectos...</div>
+  </div>
 </div>
 
 <script>
-  // DÍA 3 - JS
   let clicks = 0;
   const countSpan = document.getElementById('count');
   const btnDark = document.getElementById('btn-dark');
-  const btnWa = document.getElementById('btn-wa');
 
   document.body.addEventListener('click', () => {
     clicks++;
@@ -46,23 +72,18 @@
 
   btnDark.addEventListener('click', (e) => {
     e.stopPropagation();
-    document.body.classList.toggle('dark-mode');
-    btnDark.textContent = document.body.classList.contains('dark-mode') ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
+    document.body.classList.toggle('dark');
+    btnDark.textContent = document.body.classList.contains('dark') ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
   });
 
-  btnWa.addEventListener('click', () => {
-    setTimeout(()=> alert('Redirigiendo al WhatsApp de CodeCaiman 🐊'), 200);
-  });
-
-  // DÍA 4 - API
   async function cargarProyectos() {
     const lista = document.getElementById('lista-repos');
     try {
-      const res = await fetch('https://api.github.com/users/codecaiman/repos');
+      const res = await fetch('https://api.github.com/users/codecaiman/repos?sort=updated');
       const repos = await res.json();
       lista.innerHTML = '';
-      repos.slice(0,3).forEach(repo => {
-        lista.innerHTML += `<p>📦 <b>${repo.name}</b> - ${repo.description || 'Sin descripción'} - ⭐ ${repo.stargazers_count}</p>`;
+      repos.slice(0,4).forEach(repo => {
+        lista.innerHTML += `<div class="repo">📦 <b>${repo.name}</b><br><span style="font-size:13px; opacity:0.7;">${repo.description || 'Sin descripción'}</span><br><span style="font-size:12px;">⭐ ${repo.stargazers_count} | ${repo.language || 'Code'}</span></div>`;
       });
     } catch (e) {
       lista.innerHTML = 'Error cargando proyectos';
@@ -70,6 +91,5 @@
   }
   cargarProyectos();
 </script>
-
 </body>
 </html>
