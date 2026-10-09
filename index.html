@@ -29,7 +29,24 @@
   
   <div class="counter">Has hecho <span id="count">0</span> clicks en mi portafolio</div>
 </div>
-
+<div class="card" id="proyectos">
+  <h2>🔴 Proyectos en vivo desde GitHub</h2>
+  <div id="lista-repos">Cargando proyectos...</div>
+</div>
+  async function cargarProyectos() {
+  const lista = document.getElementById('lista-repos');
+  try {
+    const res = await fetch('https://api.github.com/users/codecaiman/repos');
+    const repos = await res.json();
+    lista.innerHTML = '';
+    repos.slice(0,3).forEach(repo => {
+      lista.innerHTML += `<p>📦 <b>${repo.name}</b> - ${repo.description || 'Sin descripción'} - ⭐ ${repo.stargazers_count}</p>`;
+    });
+  } catch (e) {
+    lista.innerHTML = 'Error cargando proyectos';
+  }
+}
+cargarProyectos();
 <script>
   // DÍA 3 - JS
   let clicks = 0;
