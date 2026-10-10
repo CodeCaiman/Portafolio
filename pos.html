@@ -1,67 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>CaimanPOS - Día 10</title>
+<title>CaimanPOS - Día 11</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px;max-width:500px;margin:auto}
 .item{display:flex;justify-content:space-between;align-items:center;background:#141414;padding:12px;margin:8px 0;border-radius:10px;border-left:4px solid #a855f7}
 .total{font-size:32px;font-weight:900;color:#a855f7;margin-top:20px}
-input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;color:#fff;margin:5px 0;width:28%}
-input:focus{border-color:#a855f7;outline:none}
-.btn-add{padding:12px 20px;background:#a855f7;color:#fff;border:none;border-radius:10px;font-weight:900;cursor:pointer;margin-top:10px;width:100%;font-size:16px}
-.btn-del{background:#ff1a4a;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-weight:900;cursor:pointer;margin-left:10px}
-#error{display:none;background:#ff1a4a;color:white;padding:12px;border-radius:8px;margin-top:12px;text-align:center;font-weight:bold}
+input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;color:#fff;margin:5px;width:28%}
+.btn-add{padding:12px;background:#a855f7;color:#fff;border:none;border-radius:10px;font-weight:900;width:100%;margin-top:10px}
+.btn-vender{background:#22c55e;color:#000;border:none;padding:6px 12px;border-radius:6px;font-weight:900;margin-right:5px}
+.btn-del{background:#ff1a4a;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-weight:900}
+#error{display:none;background:#ff1a4a;color:white;padding:10px;border-radius:8px;margin-top:10px;text-align:center}
 </style>
 </head>
 <body>
-<h1>CAIMAN POS - DÍA 10 🗑️</h1>
-
+<h1>CAIMAN POS - DÍA 11 🛒</h1>
 <input id="nombre" placeholder="Producto">
 <input id="precio" type="number" placeholder="Precio $">
 <input id="stock" type="number" placeholder="Stock">
-
 <button class="btn-add" onclick="agregar()">+ AGREGAR PRODUCTO</button>
 <div id="error"></div>
 <div id="lista" style="margin-top:20px"></div>
 <div class="total">TOTAL: $<span id="total">0</span></div>
+<button onclick="resetear()" style="margin-top:30px;background:#222;color:#777;border:none;padding:8px;border-radius:6px;width:100%">Resetear tienda (si se traba)</button>
 
 <script>
-let productos = JSON.parse(localStorage.getItem('caiman_pos')) || [
+let guardado = JSON.parse(localStorage.getItem('caiman_pos'));
+let productos = (guardado && guardado.length > 0)? guardado : [
   {nombre:"Sabritas", precio:18, stock:20},
   {nombre:"Coca 600ml", precio:20, stock:5},
   {nombre:"Galletas", precio:15, stock:8}
 ];
-
 function guardar(){ localStorage.setItem('caiman_pos', JSON.stringify(productos)); }
+function resetear(){ localStorage.clear(); location.reload(); }
 
 function render(){
   let html=""; let total=0;
   productos.forEach((p,i)=>{
     let v=p.precio*p.stock; total+=v;
-    html+=`<div class="item"><span>${p.nombre} x${p.stock}</span><span>$${v} <button class="btn-del" onclick="borrar(${i})">X</button></span></div>`;
-    <button onclick="vender(${i})">-1</button>
+    html+=`<div class="item"><span>${p.nombre} x${p.stock}</span><span>$${v} <button class="btn-vender" onclick="vender(${i})">-1</button><button class="btn-del" onclick="borrar(${i})">X</button></span></div>`;
   });
   document.getElementById('lista').innerHTML=html;
   document.getElementById('total').textContent=total;
   guardar();
 }
-
-function borrar(i){
-  productos.splice(i,1); // DÍA 10: Borra 1 elemento en posición i
-  render();
-}
-
+function vender(i){ if(productos[i].stock>0){ productos[i].stock--; render(); } }
+function borrar(i){ productos.splice(i,1); render(); }
 function agregar(){
   let n=document.getElementById('nombre').value.trim();
   let pr=parseInt(document.getElementById('precio').value);
   let st=parseInt(document.getElementById('stock').value);
-  let errorDiv=document.getElementById('error');
-  if(!n || !pr || !st){ errorDiv.textContent="⚠️ Completa nombre, precio y stock"; errorDiv.style.display="block"; return; }
-  errorDiv.style.display="none";
+  let e=document.getElementById('error');
+  if(!n ||!pr ||!st){ e.textContent="⚠️ Llena todo"; e.style.display="block"; return; }
+  e.style.display="none";
   productos.push({nombre:n, precio:pr, stock:st});
-  render();
   document.getElementById('nombre').value=""; document.getElementById('precio').value=""; document.getElementById('stock').value="";
+  render();
 }
 render();
 </script>
