@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>CaimanPOS - Día 16</title>
+<title>MICELANIA-CAIMANA</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px;max-width:500px;margin:auto}
@@ -9,20 +9,29 @@ body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px;max-width
 .item{display:flex;justify-content:space-between;align-items:center;background:#141414;padding:12px;margin:8px 0;border-radius:10px;border-left:4px solid #a855f7}
 .item.bajo{border-left:4px solid #ff1a4a; background:#1a0f0f;}
 .badge-bajo{background:#ff1a4a;color:#fff;padding:2px 6px;border-radius:4px;font-size:10px;margin-left:8px;font-weight:900}
-.total{font-size:22px;font-weight:900;color:#a855f7;margin-top:15px}
+.total{font-size:20px;font-weight:900;color:#a855f7;margin-top:15px}
 .vendido{font-size:18px;font-weight:900;color:#22c55e;background:#0f1a12;padding:12px;border-radius:10px;margin-top:15px;text-align:center;border:1px solid #22c55e}
 .ticket{background:#fff;color:#000;padding:15px;border-radius:10px;margin-top:20px;font-family:monospace;font-size:13px}
 .ticket h3{margin:0 0 10px 0;text-align:center;border-bottom:2px dashed #000;padding-bottom:8px}
 .ticket-item{display:flex;justify-content:space-between;margin:4px 0}
+.surtir{background:#1a0f0f;border:1px solid #ff1a4a;padding:12px;border-radius:10px;margin-top:15px;color:#ff8a8a}
 input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;color:#fff;margin:5px;width:28%}
 .btn-add{padding:12px;background:#a855f7;color:#fff;border:none;border-radius:10px;font-weight:900;width:100%;margin-top:10px}
+.btn-print{padding:10px;background:#fff;color:#000;border:none;border-radius:8px;font-weight:900;width:100%;margin-top:10px}
 .btn-vender{background:#22c55e;color:#000;border:none;padding:5px 10px;border-radius:6px;font-weight:900;margin-right:4px}
 .btn-edit{background:#3b82f6;color:#fff;border:none;padding:5px 10px;border-radius:6px;font-weight:900;margin-right:4px}
 .btn-del{background:#ff1a4a;color:#fff;border:none;padding:5px 10px;border-radius:6px;font-weight:900}
+
+@media print {
+  body *{visibility:hidden}
+  #ticket, #ticket *{visibility:visible}
+  #ticket{position:absolute;left:0;top:0;width:100%;background:#fff;color:#000}
+ .btn-print{display:none}
+}
 </style>
 </head>
 <body>
-<h1>CAIMAN POS -MICELANEA CAIMAN 🧾</h1>
+<h1>CAIMAN POS - DÍA 17 🖨️</h1>
 <input type="text" id="buscador" class="buscador" placeholder="🔍 Buscar producto..." oninput="render()">
 <input id="nombre" placeholder="Producto"><input id="precio" type="number" placeholder="Precio $"><input id="stock" type="number" placeholder="Stock">
 <button class="btn-add" onclick="agregar()">+ AGREGAR PRODUCTO</button>
@@ -30,29 +39,32 @@ input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;co
 <div class="total">INVENTARIO: $<span id="total">0</span></div>
 <div class="vendido">VENDIDO HOY: $<span id="vendido">0</span> <button onclick="cerrarCaja()" style="margin-left:10px;background:#fff;color:#000;border:none;padding:4px 8px;border-radius:5px;font-size:12px">CERRAR CAJA</button></div>
 
+<div id="surtir" class="surtir"></div>
+
 <div class="ticket" id="ticket">
-<h3>🧾 TICKET - CAIMAN POS</h3>
+<h3>🧾 TICKET - CAIMAN POS<br><span id="fecha" style="font-size:10px"></span></h3>
 <div id="ticket-lista">Sin ventas aún...</div>
 <div style="border-top:2px dashed #000;margin-top:10px;padding-top:8px;font-weight:900;display:flex;justify-content:space-between"><span>TOTAL:</span><span id="ticket-total">$0</span></div>
+<button class="btn-print" onclick="window.print()">🖨️ IMPRIMIR TICKET</button>
 </div>
 
 <script>
 let productos = JSON.parse(localStorage.getItem('caiman_pos')) || [
-  {nombre:"Sabritas", precio:20, stock:25},
-  {nombre:"Coca 600ml", precio:20, stock:20},
-  {nombre:"Galletas", precio:15, stock:4}
+  {nombre:"Sabritas", precio:20, stock:24},
+  {nombre:"Coca 600ml", precio:20, stock:19},
+  {nombre:"Galletas", precio:15, stock:3}
 ];
 let vendidoHoy = parseInt(localStorage.getItem('caiman_vendido')) || 0;
 let ventas = JSON.parse(localStorage.getItem('caiman_ventas')) || [];
-
 function guardar(){ localStorage.setItem('caiman_pos', JSON.stringify(productos)); localStorage.setItem('caiman_vendido', vendidoHoy); localStorage.setItem('caiman_ventas', JSON.stringify(ventas)); }
 function cerrarCaja(){ if(confirm("¿Cerrar caja y borrar ticket?")){ vendidoHoy=0; ventas=[]; guardar(); render(); } }
 
 function render(){
   let filtro = document.getElementById('buscador').value.toLowerCase();
-  let html=""; let total=0;
+  let html=""; let total=0; let bajos=[];
   productos.forEach((p,i)=>{
     let v=p.precio*p.stock; total+=v;
+    if(p.stock<=4) bajos.push(p.nombre+" x"+p.stock);
     if(p.nombre.toLowerCase().includes(filtro)){
       let claseBajo = p.stock <= 4? 'bajo' : '';
       let badge = p.stock <= 4? '<span class="badge-bajo">¡BAJO!</span>' : '';
@@ -62,6 +74,11 @@ function render(){
   document.getElementById('lista').innerHTML=html;
   document.getElementById('total').textContent=total;
   document.getElementById('vendido').textContent=vendidoHoy;
+  document.getElementById('fecha').textContent = new Date().toLocaleString();
+
+  // RESUMEN SURTIR
+  if(bajos.length>0){ document.getElementById('surtir').innerHTML="🚨 <b>FALTA SURTIR ("+bajos.length+"):</b> "+bajos.join(", "); document.getElementById('surtir').style.display="block"; }
+  else{ document.getElementById('surtir').innerHTML="✅ Todo surtido, nada por comprar"; }
 
   // TICKET
   if(ventas.length===0){ document.getElementById('ticket-lista').innerHTML="Sin ventas aún..."; document.getElementById('ticket-total').textContent="$0"; }
@@ -76,7 +93,6 @@ function render(){
   }
   guardar();
 }
-
 function vender(i){
   if(productos[i].stock>0){
     let ahora = new Date();
