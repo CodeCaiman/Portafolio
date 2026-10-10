@@ -41,8 +41,10 @@ input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;co
     <input type="password" id="passInput" placeholder="Contraseña" style="width:100%; padding:12px; margin:15px 0; border:2px solid #e2e8f0; border-radius:8px;">
     <button onclick="entrarCaiman()" style="width:100%; padding:12px; background:#22c55e; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">ENTRAR</button>
     <p id="errorLogin" style="color:red; margin-top:10px; display:none;">Contraseña incorrecta</p>
-    <p style="font-size:12px; color:#94a3b8; margin-top:10px;">Tip: La contraseña es caiman2026</p>
-  </div>
+    <p style="font-size:12px; color:#94a3b8; margin-top:10px;" id="tipPass">Tip: La contraseña es caiman2026</p>
+  <div style="margin-top:15px; border-top:1px solid #e2e8f0; padding-top:10px;">
+    <input type="password" id="nuevaPass" placeholder="Nueva contraseña" style="width:100%; padding:8px; margin:5px 0; border:1px solid #e2e8f0; border-radius:5px; box-sizing:border-box; color:#000;">
+    <button onclick="cambiarPass()" style="width:100%; padding:8px; background:#0f172a; color:white; border:none; border-radius:5px; font-size:12px;">Cambiar Contraseña</button>
 </div>
 <div class="container">
 <h1>MICELANIA CAIMAN🚀</h1>
@@ -199,23 +201,43 @@ function agregar(){
   document.getElementById('nombre').value=""; document.getElementById('precio').value=""; document.getElementById('stock').value="";
   render();
 }
-  function entrarCaiman(){
+  // --- LOGIN MEJORADO CON CAMBIO DE CONTRASEÑA ---
+function getPassActual(){
+  return localStorage.getItem('caimanPass') || 'caiman2026';
+}
+
+function entrarCaiman(){
   const pass = document.getElementById('passInput').value.trim();
-  if(pass === 'caiman2026'){
+  if(pass === getPassActual()){
     localStorage.setItem('caimanLogueado','si');
     document.getElementById('pantallaLogin').style.display='none';
   } else {
     document.getElementById('errorLogin').style.display='block';
   }
 }
+
+function cambiarPass(){
+  const nueva = document.getElementById('nuevaPass').value.trim();
+  if(nueva.length < 4){
+    alert("Mínimo 4 letras paree");
+    return;
+  }
+  localStorage.setItem('caimanPass', nueva);
+  document.getElementById('tipPass').textContent = "Nueva contraseña guardada: " + nueva;
+  document.getElementById('nuevaPass').value = "";
+  alert("¡Contraseña cambiada a: " + nueva + " !");
+}
+
+if(localStorage.getItem('caimanLogueado') === 'si'){
+  document.getElementById('pantallaLogin').style.display='none';
+}
 function salirCaiman(){
   localStorage.removeItem('caimanLogueado');
   location.reload();
 }
-if(localStorage.getItem('caimanLogueado') === 'si'){
-  document.getElementById('pantallaLogin').style.display='none';
-}
-render();
+
+// Mostrar la pass actual en el tip
+document.getElementById('tipPass').textContent = "Contraseña actual: " + getPassActual();
 </script>
 </body>
 </html>
