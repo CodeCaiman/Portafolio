@@ -1,47 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>CaimanPOS - Día 15</title>
+<title>CaimanPOS - Día 16</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px;max-width:500px;margin:auto}
 .buscador{width:100%;padding:14px;border-radius:10px;border:2px solid #a855f7;background:#141414;color:#fff;font-size:16px;margin-bottom:15px;box-sizing:border-box}
 .item{display:flex;justify-content:space-between;align-items:center;background:#141414;padding:12px;margin:8px 0;border-radius:10px;border-left:4px solid #a855f7}
-.item.bajo{border-left:4px solid #ff1a4a; background:#1a0f0f; animation: parpadeo 1s infinite alternate}
-@keyframes parpadeo { from { opacity:1 } to { opacity:0.7 } }
+.item.bajo{border-left:4px solid #ff1a4a; background:#1a0f0f;}
 .badge-bajo{background:#ff1a4a;color:#fff;padding:2px 6px;border-radius:4px;font-size:10px;margin-left:8px;font-weight:900}
-.total{font-size:24px;font-weight:900;color:#a855f7;margin-top:15px}
-.vendido{font-size:20px;font-weight:900;color:#22c55e;background:#0f1a12;padding:12px;border-radius:10px;margin-top:15px;text-align:center;border:1px solid #22c55e}
+.total{font-size:22px;font-weight:900;color:#a855f7;margin-top:15px}
+.vendido{font-size:18px;font-weight:900;color:#22c55e;background:#0f1a12;padding:12px;border-radius:10px;margin-top:15px;text-align:center;border:1px solid #22c55e}
+.ticket{background:#fff;color:#000;padding:15px;border-radius:10px;margin-top:20px;font-family:monospace;font-size:13px}
+.ticket h3{margin:0 0 10px 0;text-align:center;border-bottom:2px dashed #000;padding-bottom:8px}
+.ticket-item{display:flex;justify-content:space-between;margin:4px 0}
 input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;color:#fff;margin:5px;width:28%}
 .btn-add{padding:12px;background:#a855f7;color:#fff;border:none;border-radius:10px;font-weight:900;width:100%;margin-top:10px}
 .btn-vender{background:#22c55e;color:#000;border:none;padding:5px 10px;border-radius:6px;font-weight:900;margin-right:4px}
 .btn-edit{background:#3b82f6;color:#fff;border:none;padding:5px 10px;border-radius:6px;font-weight:900;margin-right:4px}
 .btn-del{background:#ff1a4a;color:#fff;border:none;padding:5px 10px;border-radius:6px;font-weight:900}
-#error{display:none;background:#ff1a4a;color:white;padding:10px;border-radius:8px;margin-top:10px;text-align:center}
 </style>
 </head>
 <body>
-<h1>CAIMAN POS - DÍA 15 🚨</h1>
+<h1>CAIMAN POS -MICELANEA CAIMAN 🧾</h1>
 <input type="text" id="buscador" class="buscador" placeholder="🔍 Buscar producto..." oninput="render()">
-<input id="nombre" placeholder="Producto">
-<input id="precio" type="number" placeholder="Precio $">
-<input id="stock" type="number" placeholder="Stock">
+<input id="nombre" placeholder="Producto"><input id="precio" type="number" placeholder="Precio $"><input id="stock" type="number" placeholder="Stock">
 <button class="btn-add" onclick="agregar()">+ AGREGAR PRODUCTO</button>
-<div id="error"></div>
 <div id="lista" style="margin-top:20px"></div>
 <div class="total">INVENTARIO: $<span id="total">0</span></div>
 <div class="vendido">VENDIDO HOY: $<span id="vendido">0</span> <button onclick="cerrarCaja()" style="margin-left:10px;background:#fff;color:#000;border:none;padding:4px 8px;border-radius:5px;font-size:12px">CERRAR CAJA</button></div>
 
+<div class="ticket" id="ticket">
+<h3>🧾 TICKET - CAIMAN POS</h3>
+<div id="ticket-lista">Sin ventas aún...</div>
+<div style="border-top:2px dashed #000;margin-top:10px;padding-top:8px;font-weight:900;display:flex;justify-content:space-between"><span>TOTAL:</span><span id="ticket-total">$0</span></div>
+</div>
+
 <script>
-let guardado = JSON.parse(localStorage.getItem('caiman_pos'));
-let productos = (guardado && guardado.length > 0)? guardado : [
+let productos = JSON.parse(localStorage.getItem('caiman_pos')) || [
   {nombre:"Sabritas", precio:20, stock:25},
-  {nombre:"Coca 600ml", precio:20, stock:4},
-  {nombre:"Galletas", precio:15, stock:7}
+  {nombre:"Coca 600ml", precio:20, stock:20},
+  {nombre:"Galletas", precio:15, stock:4}
 ];
 let vendidoHoy = parseInt(localStorage.getItem('caiman_vendido')) || 0;
-function guardar(){ localStorage.setItem('caiman_pos', JSON.stringify(productos)); localStorage.setItem('caiman_vendido', vendidoHoy); }
-function cerrarCaja(){ if(confirm("¿Cerrar caja?")){ vendidoHoy=0; guardar(); document.getElementById('vendido').textContent=0; } }
+let ventas = JSON.parse(localStorage.getItem('caiman_ventas')) || [];
+
+function guardar(){ localStorage.setItem('caiman_pos', JSON.stringify(productos)); localStorage.setItem('caiman_vendido', vendidoHoy); localStorage.setItem('caiman_ventas', JSON.stringify(ventas)); }
+function cerrarCaja(){ if(confirm("¿Cerrar caja y borrar ticket?")){ vendidoHoy=0; ventas=[]; guardar(); render(); } }
 
 function render(){
   let filtro = document.getElementById('buscador').value.toLowerCase();
@@ -57,26 +62,42 @@ function render(){
   document.getElementById('lista').innerHTML=html;
   document.getElementById('total').textContent=total;
   document.getElementById('vendido').textContent=vendidoHoy;
+
+  // TICKET
+  if(ventas.length===0){ document.getElementById('ticket-lista').innerHTML="Sin ventas aún..."; document.getElementById('ticket-total').textContent="$0"; }
+  else {
+    let tHtml=""; let tTotal=0;
+    ventas.forEach(v=>{
+      tHtml+=`<div class="ticket-item"><span>${v.hora} - ${v.nombre}</span><span>$${v.precio}</span></div>`;
+      tTotal+=v.precio;
+    });
+    document.getElementById('ticket-lista').innerHTML=tHtml;
+    document.getElementById('ticket-total').textContent="$"+tTotal;
+  }
   guardar();
 }
-function vender(i){ if(productos[i].stock>0){ vendidoHoy+=productos[i].precio; productos[i].stock--; render(); } }
+
+function vender(i){
+  if(productos[i].stock>0){
+    let ahora = new Date();
+    let hora = ahora.getHours()+":"+String(ahora.getMinutes()).padStart(2,'0');
+    ventas.push({nombre:productos[i].nombre, precio:productos[i].precio, hora:hora});
+    vendidoHoy+=productos[i].precio;
+    productos[i].stock--;
+    render();
+  }
+}
 function borrar(i){ if(confirm("¿Borrar?")){ productos.splice(i,1); render(); } }
 function editar(i){
-  let nuevoPrecio = prompt("Nuevo precio para "+productos[i].nombre+":", productos[i].precio);
-  if(nuevoPrecio===null) return;
-  let nuevoStock = prompt("Nuevo stock:", productos[i].stock);
-  if(nuevoStock===null) return;
-  productos[i].precio = parseInt(nuevoPrecio);
-  productos[i].stock = parseInt(nuevoStock);
-  render();
+  let np = prompt("Nuevo precio:", productos[i].precio); if(np===null) return;
+  let ns = prompt("Nuevo stock:", productos[i].stock); if(ns===null) return;
+  productos[i].precio=parseInt(np); productos[i].stock=parseInt(ns); render();
 }
 function agregar(){
   let n=document.getElementById('nombre').value.trim();
   let pr=parseInt(document.getElementById('precio').value);
   let st=parseInt(document.getElementById('stock').value);
-  let e=document.getElementById('error');
-  if(!n ||!pr ||!st){ e.textContent="⚠️ Llena todo"; e.style.display="block"; return; }
-  e.style.display="none";
+  if(!n ||!pr ||!st) return;
   productos.push({nombre:n, precio:pr, stock:st});
   document.getElementById('nombre').value=""; document.getElementById('precio').value=""; document.getElementById('stock').value="";
   render();
