@@ -1,7 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>CaimanPOS - Día 11</title>
+title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px;max-width:500px;margin:auto}
@@ -11,54 +8,4 @@ input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;co
 .btn-add{padding:12px;background:#a855f7;color:#fff;border:none;border-radius:10px;font-weight:900;width:100%;margin-top:10px}
 .btn-vender{background:#22c55e;color:#000;border:none;padding:6px 12px;border-radius:6px;font-weight:900;margin-right:5px}
 .btn-del{background:#ff1a4a;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-weight:900}
-#error{display:none;background:#ff1a4a;color:white;padding:10px;border-radius:8px;margin-top:10px;text-align:center}
-</style>
-</head>
-<body>
-<h1>CAIMAN POS - DÍA 11 🛒</h1>
-<input id="nombre" placeholder="Producto">
-<input id="precio" type="number" placeholder="Precio $">
-<input id="stock" type="number" placeholder="Stock">
-<button class="btn-add" onclick="agregar()">+ AGREGAR PRODUCTO</button>
-<div id="error"></div>
-<div id="lista" style="margin-top:20px"></div>
-<div class="total">TOTAL: $<span id="total">0</span></div>
-<button onclick="resetear()" style="margin-top:30px;background:#222;color:#777;border:none;padding:8px;border-radius:6px;width:100%">Resetear tienda (si se traba)</button>
-
-<script>
-let guardado = JSON.parse(localStorage.getItem('caiman_pos'));
-let productos = (guardado && guardado.length > 0)? guardado : [
-  {nombre:"Sabritas", precio:18, stock:20},
-  {nombre:"Coca 600ml", precio:20, stock:5},
-  {nombre:"Galletas", precio:15, stock:8}
-];
-function guardar(){ localStorage.setItem('caiman_pos', JSON.stringify(productos)); }
-function resetear(){ localStorage.clear(); location.reload(); }
-
-function render(){
-  let html=""; let total=0;
-  productos.forEach((p,i)=>{
-    let v=p.precio*p.stock; total+=v;
-    html+=`<div class="item"><span>${p.nombre} x${p.stock}</span><span>$${v} <button class="btn-vender" onclick="vender(${i})">-1</button><button class="btn-del" onclick="borrar(${i})">X</button></span></div>`;
-  });
-  document.getElementById('lista').innerHTML=html;
-  document.getElementById('total').textContent=total;
-  guardar();
-}
-function vender(i){ if(productos[i].stock>0){ productos[i].stock--; render(); } }
-function borrar(i){ productos.splice(i,1); render(); }
-function agregar(){
-  let n=document.getElementById('nombre').value.trim();
-  let pr=parseInt(document.getElementById('precio').value);
-  let st=parseInt(document.getElementById('stock').value);
-  let e=document.getElementById('error');
-  if(!n ||!pr ||!st){ e.textContent="⚠️ Llena todo"; e.style.display="block"; return; }
-  e.style.display="none";
-  productos.push({nombre:n, precio:pr, stock:st});
-  document.getElementById('nombre').value=""; document.getElementById('precio').value=""; document.getElementById('stock').value="";
-  render();
-}
-render();
-</script>
-</body>
-</html>
+#error{display:none;background:#
