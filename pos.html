@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>MICELANIA CAIMAN</title>
+<title>CAIMAN MICELANIA FINAL</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px;max-width:500px;margin:auto}
@@ -16,10 +16,12 @@ body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px;max-width
 .surtir{background:#1a0f0f;border:1px solid #ff1a4a;padding:12px;border-radius:10px;margin-top:15px;color:#ff8a8a;font-size:14px}
 .historial{background:#141414;border:1px solid #3b82f6;padding:12px;border-radius:10px;margin-top:15px}
 .estrella{background:#1a1a0f;border:1px solid #facc15;padding:12px;border-radius:10px;margin-top:15px;color:#facc15}
+.export{background:#0f1a12;border:1px solid #22c55e;padding:12px;border-radius:10px;margin-top:15px}
 .historial-item{display:flex;justify-content:space-between;margin:4px 0;font-size:14px}
 input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;color:#fff;margin:5px;width:28%}
 .btn-add{padding:12px;background:#a855f7;color:#fff;border:none;border-radius:10px;font-weight:900;width:100%;margin-top:10px}
 .btn-print{padding:12px;background:#000;color:#fff;border:none;border-radius:8px;font-weight:900;width:100%;margin-top:15px;font-size:16px}
+.btn-export{padding:10px;background:#22c55e;color:#000;border:none;border-radius:8px;font-weight:900;width:49%;margin-top:10px;font-size:13px}
 .btn-vender{background:#22c55e;color:#000;border:none;padding:5px 10px;border-radius:6px;font-weight:900;margin-right:4px}
 .btn-edit{background:#3b82f6;color:#fff;border:none;padding:5px 10px;border-radius:6px;font-weight:900;margin-right:4px}
 .btn-del{background:#ff1a4a;color:#fff;border:none;padding:5px 10px;border-radius:6px;font-weight:900}
@@ -32,7 +34,7 @@ input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;co
 </style>
 </head>
 <body>
-<h1>MICELANIA CAIMAN ⭐</h1>
+<h1>MICELANIA CAIMAN🚀</h1>
 <input type="text" id="buscador" class="buscador" placeholder="🔍 Buscar..." oninput="render()">
 <input id="nombre" placeholder="Producto"><input id="precio" type="number" placeholder="$"><input id="stock" type="number" placeholder="Stock">
 <button class="btn-add" onclick="agregar()">+ AGREGAR PRODUCTO</button>
@@ -55,12 +57,20 @@ input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;co
 <div style="border-top:1px solid #3b82f6;margin-top:10px;padding-top:8px;font-weight:900;display:flex;justify-content:space-between;color:#3b82f6"><span>TOTAL HISTORIAL:</span><span id="historial-total">$0</span></div>
 </div>
 
+<div class="export">
+<h3 style="margin:0 0 10px 0;color:#22c55e">📤 EXPORTAR PARA CONTADOR</h3>
+<button class="btn-export" onclick="exportarInventario()">📦 INVENTARIO</button>
+<button class="btn-export" onclick="exportarVentas()">💰 VENTAS</button>
+<p style="font-size:11px;margin-top:8px;color:#8a8a8a">Se baja un.xls que abres en Excel y se lo mandas al contador por WhatsApp</p>
+</div>
+
 <script>
 let productos = JSON.parse(localStorage.getItem('caiman_pos')) || [
   {nombre:"Sabritas", precio:20, stock:20},
   {nombre:"Coca 600ml", precio:20, stock:18},
   {nombre:"Galletas", precio:15, stock:3},
-  {nombre:"CERVEZA", precio:20, stock:4}
+  {nombre:"CERVEZA", precio:20, stock:4},
+  {nombre:"ACEITE", precio:35, stock:4}
 ];
 let vendidoHoy = parseInt(localStorage.getItem('caiman_vendido')) || 0;
 let ventas = JSON.parse(localStorage.getItem('caiman_ventas') || '[]');
@@ -80,6 +90,37 @@ function cerrarCaja(){
     vendidoHoy=0; ventas=[]; guardar(); render();
   }
 }
+
+function exportarInventario(){
+  let csv = "Producto,Precio,Stock,Valor Total,Estado\n";
+  productos.forEach(p=>{
+    let estado = p.stock<=4? "FALTA SURTIR" : "OK";
+    csv+=`${p.nombre},${p.precio},${p.stock},${p.precio*p.stock},${estado}\n`;
+  });
+  csv+=`,,TOTAL:,${productos.reduce((a,b)=>a+b.precio*b.stock,0)},\n`;
+  descargar(csv, "inventario_caiman_"+new Date().toLocaleDateString().replace(/\//g,"-")+".xls");
+}
+function exportarVentas(){
+  let csv = "Fecha,Hora,Producto,Precio\n";
+  historial.forEach(h=>{
+    h.ventas.forEach(v=>{
+      csv+=`${h.fecha},${v.hora},${v.nombre},${v.precio}\n`;
+    });
+    csv+=`${h.fecha},,CIERRE CAJA,${h.total}\n`;
+  });
+  ventas.forEach(v=>{
+    csv+=`${new Date().toLocaleDateString()},${v.hora},${v.nombre},${v.precio}\n`;
+  });
+  csv+=`,,TOTAL HISTORIAL,${historial.reduce((a,b)=>a+b.total,0)+vendidoHoy}\n`;
+  descargar(csv, "ventas_caiman_"+new Date().toLocaleDateString().replace(/\//g,"-")+".xls");
+}
+function descargar(contenido, nombre){
+  let blob = new Blob(["\uFEFF"+contenido], {type: "text/csv;charset=utf-8;"});
+  let url = URL.createObjectURL(blob);
+  let a = document.createElement("a");
+  a.href=url; a.download=nombre; a.click();
+}
+
 function render(){
   let filtro = document.getElementById('buscador').value.toLowerCase();
   let html=""; let total=0; let bajos=[];
@@ -106,19 +147,15 @@ function render(){
     document.getElementById('ticket-total').textContent="$"+tTotal;
   }
 
-  // HISTORIAL + ESTRELLA
   let conteo = {};
   historial.forEach(h=>{ h.ventas.forEach(v=>{ conteo[v.nombre] = (conteo[v.nombre]||0)+1; }); });
   ventas.forEach(v=>{ conteo[v.nombre] = (conteo[v.nombre]||0)+1; });
-
   let listaNombres = Object.keys(conteo);
   if(listaNombres.length>0){
     let ordenados = listaNombres.sort((a,b)=>conteo[b]-conteo[a]);
-    let top = ordenados[0];
-    let flop = ordenados[ordenados.length-1];
-    document.getElementById('estrella').innerHTML = `⭐ PRODUCTO ESTRELLA: <b>${top} (${conteo[top]} ventas)</b><br>🐢 MENOS VENDIDO: ${flop} (${conteo[flop]})`;
+    document.getElementById('estrella').innerHTML = `⭐ ESTRELLA: <b>${ordenados[0]} (${conteo[ordenados[0]]})</b><br>🐢 MENOS: ${ordenados[ordenados.length-1]} (${conteo[ordenados[ordenados.length-1]]})`;
   } else {
-    document.getElementById('estrella').innerHTML = "⭐ Aún no hay ventas para calcular estrella. ¡Vende algo!";
+    document.getElementById('estrella').innerHTML = "⭐ Vende algo para ver tu estrella";
   }
 
   if(historial.length===0){ document.getElementById('historial-lista').innerHTML="Aún no hay cierres..."; document.getElementById('historial-total').textContent="$0"; }
