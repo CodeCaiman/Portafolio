@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>CaimanPOS - Día 14</title>
+<title>CaimanPOS - Día 15</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px;max-width:500px;margin:auto}
 .buscador{width:100%;padding:14px;border-radius:10px;border:2px solid #a855f7;background:#141414;color:#fff;font-size:16px;margin-bottom:15px;box-sizing:border-box}
 .item{display:flex;justify-content:space-between;align-items:center;background:#141414;padding:12px;margin:8px 0;border-radius:10px;border-left:4px solid #a855f7}
+.item.bajo{border-left:4px solid #ff1a4a; background:#1a0f0f; animation: parpadeo 1s infinite alternate}
+@keyframes parpadeo { from { opacity:1 } to { opacity:0.7 } }
+.badge-bajo{background:#ff1a4a;color:#fff;padding:2px 6px;border-radius:4px;font-size:10px;margin-left:8px;font-weight:900}
 .total{font-size:24px;font-weight:900;color:#a855f7;margin-top:15px}
 .vendido{font-size:20px;font-weight:900;color:#22c55e;background:#0f1a12;padding:12px;border-radius:10px;margin-top:15px;text-align:center;border:1px solid #22c55e}
 input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;color:#fff;margin:5px;width:28%}
@@ -18,7 +21,7 @@ input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;co
 </style>
 </head>
 <body>
-<h1>CAIMAN POS - DÍA 14 ✏️</h1>
+<h1>CAIMAN POS - DÍA 15 🚨</h1>
 <input type="text" id="buscador" class="buscador" placeholder="🔍 Buscar producto..." oninput="render()">
 <input id="nombre" placeholder="Producto">
 <input id="precio" type="number" placeholder="Precio $">
@@ -32,9 +35,9 @@ input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;co
 <script>
 let guardado = JSON.parse(localStorage.getItem('caiman_pos'));
 let productos = (guardado && guardado.length > 0)? guardado : [
-  {nombre:"Sabritas", precio:18, stock:20},
-  {nombre:"Coca 600ml", precio:20, stock:5},
-  {nombre:"Galletas", precio:15, stock:8}
+  {nombre:"Sabritas", precio:20, stock:25},
+  {nombre:"Coca 600ml", precio:20, stock:4},
+  {nombre:"Galletas", precio:15, stock:7}
 ];
 let vendidoHoy = parseInt(localStorage.getItem('caiman_vendido')) || 0;
 function guardar(){ localStorage.setItem('caiman_pos', JSON.stringify(productos)); localStorage.setItem('caiman_vendido', vendidoHoy); }
@@ -46,7 +49,9 @@ function render(){
   productos.forEach((p,i)=>{
     let v=p.precio*p.stock; total+=v;
     if(p.nombre.toLowerCase().includes(filtro)){
-      html+=`<div class="item"><span>${p.nombre} x${p.stock}</span><span>$${v} <button class="btn-vender" onclick="vender(${i})">-1</button><button class="btn-edit" onclick="editar(${i})">✏️</button><button class="btn-del" onclick="borrar(${i})">X</button></span></div>`;
+      let claseBajo = p.stock <= 4? 'bajo' : '';
+      let badge = p.stock <= 4? '<span class="badge-bajo">¡BAJO!</span>' : '';
+      html+=`<div class="item ${claseBajo}"><span>${p.nombre} x${p.stock} ${badge}</span><span>$${v} <button class="btn-vender" onclick="vender(${i})">-1</button><button class="btn-edit" onclick="editar(${i})">✏️</button><button class="btn-del" onclick="borrar(${i})">X</button></span></div>`;
     }
   });
   document.getElementById('lista').innerHTML=html;
@@ -56,8 +61,6 @@ function render(){
 }
 function vender(i){ if(productos[i].stock>0){ vendidoHoy+=productos[i].precio; productos[i].stock--; render(); } }
 function borrar(i){ if(confirm("¿Borrar?")){ productos.splice(i,1); render(); } }
-
-// DÍA 14 - LA MAGIA
 function editar(i){
   let nuevoPrecio = prompt("Nuevo precio para "+productos[i].nombre+":", productos[i].precio);
   if(nuevoPrecio===null) return;
@@ -67,7 +70,6 @@ function editar(i){
   productos[i].stock = parseInt(nuevoStock);
   render();
 }
-
 function agregar(){
   let n=document.getElementById('nombre').value.trim();
   let pr=parseInt(document.getElementById('precio').value);
