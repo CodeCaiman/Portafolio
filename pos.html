@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>CaimanPOS - Día 12</title>
+<title>CaimanPOS - Día 13</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px;max-width:500px;margin:auto}
+.buscador{width:100%;padding:14px;border-radius:10px;border:2px solid #a855f7;background:#141414;color:#fff;font-size:16px;margin-bottom:15px;box-sizing:border-box}
 .item{display:flex;justify-content:space-between;align-items:center;background:#141414;padding:12px;margin:8px 0;border-radius:10px;border-left:4px solid #a855f7}
-.total{font-size:28px;font-weight:900;color:#a855f7;margin-top:15px}
-.vendido{font-size:22px;font-weight:900;color:#22c55e;background:#0f1a12;padding:12px;border-radius:10px;margin-top:15px;text-align:center;border:1px solid #22c55e}
+.total{font-size:24px;font-weight:900;color:#a855f7;margin-top:15px}
+.vendido{font-size:20px;font-weight:900;color:#22c55e;background:#0f1a12;padding:12px;border-radius:10px;margin-top:15px;text-align:center;border:1px solid #22c55e}
 input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;color:#fff;margin:5px;width:28%}
 .btn-add{padding:12px;background:#a855f7;color:#fff;border:none;border-radius:10px;font-weight:900;width:100%;margin-top:10px}
 .btn-vender{background:#22c55e;color:#000;border:none;padding:6px 12px;border-radius:6px;font-weight:900;margin-right:5px}
@@ -16,7 +17,8 @@ input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;co
 </style>
 </head>
 <body>
-<h1>CAIMAN POS - DÍA 12 🧾</h1>
+<h1>CAIMAN POS - DÍA 13 🔍</h1>
+<input type="text" id="buscador" class="buscador" placeholder="🔍 Buscar producto..." oninput="render()">
 <input id="nombre" placeholder="Producto">
 <input id="precio" type="number" placeholder="Precio $">
 <input id="stock" type="number" placeholder="Stock">
@@ -25,7 +27,6 @@ input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;co
 <div id="lista" style="margin-top:20px"></div>
 <div class="total">INVENTARIO: $<span id="total">0</span></div>
 <div class="vendido">VENDIDO HOY: $<span id="vendido">0</span> <button onclick="cerrarCaja()" style="margin-left:10px;background:#fff;color:#000;border:none;padding:4px 8px;border-radius:5px;font-size:12px">CERRAR CAJA</button></div>
-<button onclick="resetear()" style="margin-top:20px;background:#222;color:#777;border:none;padding:8px;border-radius:6px;width:100%">Resetear tienda</button>
 
 <script>
 let guardado = JSON.parse(localStorage.getItem('caiman_pos'));
@@ -36,31 +37,25 @@ let productos = (guardado && guardado.length > 0)? guardado : [
 ];
 let vendidoHoy = parseInt(localStorage.getItem('caiman_vendido')) || 0;
 
-function guardar(){ 
-  localStorage.setItem('caiman_pos', JSON.stringify(productos)); 
-  localStorage.setItem('caiman_vendido', vendidoHoy);
-}
-function resetear(){ localStorage.clear(); location.reload(); }
-function cerrarCaja(){ if(confirm("¿Cerrar caja? Se reinicia a $0")){ vendidoHoy=0; guardar(); document.getElementById('vendido').textContent=0; } }
+function guardar(){ localStorage.setItem('caiman_pos', JSON.stringify(productos)); localStorage.setItem('caiman_vendido', vendidoHoy); }
+function cerrarCaja(){ if(confirm("¿Cerrar caja?")){ vendidoHoy=0; guardar(); document.getElementById('vendido').textContent=0; } }
 
 function render(){
+  let filtro = document.getElementById('buscador').value.toLowerCase();
   let html=""; let total=0;
   productos.forEach((p,i)=>{
     let v=p.precio*p.stock; total+=v;
-    html+=`<div class="item"><span>${p.nombre} x${p.stock}</span><span>$${v} <button class="btn-vender" onclick="vender(${i})">-1</button><button class="btn-del" onclick="borrar(${i})">X</button></span></div>`;
+    // MAGIA DÍA 13: si el nombre incluye lo que buscaste, muéstralo
+    if(p.nombre.toLowerCase().includes(filtro)){
+      html+=`<div class="item"><span>${p.nombre} x${p.stock}</span><span>$${v} <button class="btn-vender" onclick="vender(${i})">-1</button><button class="btn-del" onclick="borrar(${i})">X</button></span></div>`;
+    }
   });
   document.getElementById('lista').innerHTML=html;
   document.getElementById('total').textContent=total;
   document.getElementById('vendido').textContent=vendidoHoy;
   guardar();
 }
-function vender(i){ 
-  if(productos[i].stock>0){ 
-    vendidoHoy += productos[i].precio; // AQUÍ ESTÁ LA MAGIA DEL DÍA 12
-    productos[i].stock--; 
-    render(); 
-  } 
-}
+function vender(i){ if(productos[i].stock>0){ vendidoHoy+=productos[i].precio; productos[i].stock--; render(); } }
 function borrar(i){ productos.splice(i,1); render(); }
 function agregar(){
   let n=document.getElementById('nombre').value.trim();
