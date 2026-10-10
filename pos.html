@@ -37,14 +37,18 @@ input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;co
     <button onclick="entrarCaiman()" style="width:100%; padding:12px; background:#22c55e; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">ENTRAR</button>
     <p id="errorLogin" style="color:red; margin-top:10px; display:none;">Contraseña incorrecta</p>
     <p style="font-size:12px; color:#94a3b8; margin-top:10px;" id="tipPass">Tip: caiman2026</p>
-    <div style="margin-top:15px; border-top:1px solid #e2e8f0; padding-top:10px;">
-      <input type="password" id="nuevaPass" placeholder="Nueva contraseña" style="width:100%; padding:8px; margin:5px 0; border:1px solid #e2e8f0; border-radius:5px; box-sizing:border-box; color:#000;">
-      <button onclick="cambiarPass()" style="width:100%; padding:8px; background:#0f172a; color:white; border:none; border-radius:5px; font-size:12px;">Cambiar Contraseña</button>
-    </div>
+
   </div>
 </div>
 
 <h1>MICELANIA CAIMAN🚀 <button onclick="salirCaiman()" style="background:#ff1a4a; color:white; border:none; padding:5px 10px; border-radius:5px; font-size:11px; float:right;">Salir</button></h1>
+  <div style="background:#1a1a0f; border:1px solid #facc15; padding:10px; border-radius:10px; margin-bottom:10px;">
+  <span style="font-size:12px; color:#facc15;">🔒 Cambiar clave de dueño:</span>
+  <div style="display:flex; gap:5px; margin-top:5px;">
+    <input type="password" id="nuevaPass" placeholder="Nueva clave" style="flex:1; padding:8px; font-size:12px; color:#fff;">
+    <button onclick="cambiarPass()" style="padding:8px; background:#facc15; color:#000; border:none; border-radius:5px; font-weight:900; font-size:12px;">Guardar</button>
+  </div>
+</div>
 <input type="text" id="buscador" class="buscador" placeholder="🔍 Buscar..." oninput="render()">
 <input id="nombre" placeholder="Producto"><input id="precio" type="number" placeholder="$"><input id="stock" type="number" placeholder="Stock">
 <button class="btn-add" onclick="agregar()">+ AGREGAR PRODUCTO</button>
@@ -75,7 +79,14 @@ function agregar(){let n=document.getElementById('nombre').value.trim();let pr=p
 // LOGIN
 function getPassActual(){return localStorage.getItem('caimanPass') || 'caiman2026';}
 function entrarCaiman(){let pass=document.getElementById('passInput').value.trim();if(pass===getPassActual()){localStorage.setItem('caimanLogueado','si');document.getElementById('pantallaLogin').style.display='none';}else{document.getElementById('errorLogin').style.display='block';}}
-function cambiarPass(){let nueva=document.getElementById('nuevaPass').value.trim();if(nueva.length<4){alert("Minimo 4");return;}localStorage.setItem('caimanPass',nueva);document.getElementById('tipPass').textContent="Guardada: "+nueva;document.getElementById('nuevaPass').value="";alert("Cambiada a: "+nueva);}
+function cambiarPass(){
+  let nueva=document.getElementById('nuevaPass').value.trim();
+  if(nueva.length<4){alert("Mínimo 4");return;}
+  if(!confirm("¿Seguro cambiar a: "+nueva+" ?")) return;
+  localStorage.setItem('caimanPass',nueva);
+  document.getElementById('nuevaPass').value="";
+  alert("¡Nueva clave guardada: "+nueva+" !");
+}
 function salirCaiman(){localStorage.removeItem('caimanLogueado');location.reload();}
 if(localStorage.getItem('caimanLogueado')==='si'){document.getElementById('pantallaLogin').style.display='none';}
 document.getElementById('tipPass').textContent="Actual: "+getPassActual();
