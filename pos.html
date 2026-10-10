@@ -25,29 +25,26 @@ input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;co
 .btn-vender{background:#22c55e;color:#000;border:none;padding:5px 10px;border-radius:6px;font-weight:900;margin-right:4px}
 .btn-edit{background:#3b82f6;color:#fff;border:none;padding:5px 10px;border-radius:6px;font-weight:900;margin-right:4px}
 .btn-del{background:#ff1a4a;color:#fff;border:none;padding:5px 10px;border-radius:6px;font-weight:900}
-@media print {
-  body *{visibility:hidden}
-  #ticket, #ticket *{visibility:visible}
-  #ticket{position:absolute;left:0;top:0;width:95%;background:#fff;color:#000;font-size:18px}
-.btn-print{display:none}
-}
 </style>
 </head>
-<body> 
+<body>
+
 <div id="pantallaLogin" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#0f172a; z-index:9999; display:flex; align-items:center; justify-content:center;">
   <div style="background:white; padding:30px; border-radius:15px; text-align:center; width:90%; max-width:350px;">
-    <h2 style="margin-bottom:10px;">🐊 CAIMAN POS</h2>
+    <h2 style="margin-bottom:10px; color:#000;">🐊 CAIMAN POS</h2>
     <p style="color:#64748b;">Acceso solo dueño</p>
-    <input type="password" id="passInput" placeholder="Contraseña" style="width:100%; padding:12px; margin:15px 0; border:2px solid #e2e8f0; border-radius:8px;">
+    <input type="password" id="passInput" placeholder="Contraseña" style="width:100%; padding:12px; margin:15px 0; border:2px solid #e2e8f0; border-radius:8px; box-sizing:border-box; color:#000;">
     <button onclick="entrarCaiman()" style="width:100%; padding:12px; background:#22c55e; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">ENTRAR</button>
     <p id="errorLogin" style="color:red; margin-top:10px; display:none;">Contraseña incorrecta</p>
-    <p style="font-size:12px; color:#94a3b8; margin-top:10px;" id="tipPass">Tip: La contraseña es caiman2026</p>
-  <div style="margin-top:15px; border-top:1px solid #e2e8f0; padding-top:10px;">
-    <input type="password" id="nuevaPass" placeholder="Nueva contraseña" style="width:100%; padding:8px; margin:5px 0; border:1px solid #e2e8f0; border-radius:5px; box-sizing:border-box; color:#000;">
-    <button onclick="cambiarPass()" style="width:100%; padding:8px; background:#0f172a; color:white; border:none; border-radius:5px; font-size:12px;">Cambiar Contraseña</button>
+    <p style="font-size:12px; color:#94a3b8; margin-top:10px;" id="tipPass">Tip: caiman2026</p>
+    <div style="margin-top:15px; border-top:1px solid #e2e8f0; padding-top:10px;">
+      <input type="password" id="nuevaPass" placeholder="Nueva contraseña" style="width:100%; padding:8px; margin:5px 0; border:1px solid #e2e8f0; border-radius:5px; box-sizing:border-box; color:#000;">
+      <button onclick="cambiarPass()" style="width:100%; padding:8px; background:#0f172a; color:white; border:none; border-radius:5px; font-size:12px;">Cambiar Contraseña</button>
+    </div>
+  </div>
 </div>
-<div class="container">
-<h1>MICELANIA CAIMAN🚀</h1>
+
+<h1>MICELANIA CAIMAN🚀 <button onclick="salirCaiman()" style="background:#ff1a4a; color:white; border:none; padding:5px 10px; border-radius:5px; font-size:11px; float:right;">Salir</button></h1>
 <input type="text" id="buscador" class="buscador" placeholder="🔍 Buscar..." oninput="render()">
 <input id="nombre" placeholder="Producto"><input id="precio" type="number" placeholder="$"><input id="stock" type="number" placeholder="Stock">
 <button class="btn-add" onclick="agregar()">+ AGREGAR PRODUCTO</button>
@@ -56,188 +53,33 @@ input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;co
 <div class="vendido">VENDIDO HOY: $<span id="vendido">0</span> <button onclick="cerrarCaja()" style="margin-left:10px;background:#fff;color:#000;border:none;padding:4px 8px;border-radius:5px;font-size:12px">CERRAR CAJA</button></div>
 <div id="surtir" class="surtir"></div>
 <div id="estrella" class="estrella"></div>
-
-<div class="ticket" id="ticket">
-<h3 style="margin:0 0 10px 0;text-align:center;border-bottom:2px dashed #000;padding-bottom:8px">🧾 TICKET - MISCELANEA CAIMAN<br><span id="fecha" style="font-size:11px"></span></h3>
-<div id="ticket-lista"></div>
-<div style="border-top:2px dashed #000;margin-top:10px;padding-top:8px;font-weight:900;display:flex;justify-content:space-between;font-size:16px"><span>TOTAL:</span><span id="ticket-total">$0</span></div>
-<button class="btn-print" onclick="window.print()">🖨️ IMPRIMIR TICKET</button>
-</div>
-
-<div class="historial" id="historial">
-<h3 style="margin:0 0 10px 0;color:#3b82f6">📊 HISTORIAL DE VENTAS</h3>
-<div id="historial-lista"></div>
-<div style="border-top:1px solid #3b82f6;margin-top:10px;padding-top:8px;font-weight:900;display:flex;justify-content:space-between;color:#3b82f6"><span>TOTAL HISTORIAL:</span><span id="historial-total">$0</span></div>
-</div>
-
-<div class="export">
-<h3 style="margin:0 0 10px 0;color:#22c55e">📤 EXPORTAR PARA CONTADOR</h3>
-<button class="btn-export" onclick="exportarInventario()">📦 INVENTARIO</button>
-<button class="btn-export" onclick="exportarVentas()">💰 VENTAS</button>
-<p style="font-size:11px;margin-top:8px;color:#8a8a8a">Se baja un.xls que abres en Excel y se lo mandas al contador por WhatsApp</p>
-</div>
+<div class="ticket" id="ticket"><h3 style="margin:0 0 10px 0;text-align:center;border-bottom:2px dashed #000;padding-bottom:8px">🧾 TICKET<br><span id="fecha" style="font-size:11px"></span></h3><div id="ticket-lista"></div><div style="border-top:2px dashed #000;margin-top:10px;padding-top:8px;font-weight:900;display:flex;justify-content:space-between;font-size:16px"><span>TOTAL:</span><span id="ticket-total">$0</span></div><button class="btn-print" onclick="window.print()">🖨️ IMPRIMIR</button></div>
+<div class="historial" id="historial"><h3 style="margin:0 0 10px 0;color:#3b82f6">📊 HISTORIAL</h3><div id="historial-lista"></div><div style="border-top:1px solid #3b82f6;margin-top:10px;padding-top:8px;font-weight:900;display:flex;justify-content:space-between;color:#3b82f6"><span>TOTAL:</span><span id="historial-total">$0</span></div></div>
+<div class="export"><h3 style="margin:0 0 10px 0;color:#22c55e">📤 EXPORTAR</h3><button class="btn-export" onclick="exportarInventario()">📦 INVENTARIO</button><button class="btn-export" onclick="exportarVentas()">💰 VENTAS</button></div>
 
 <script>
-let productos = JSON.parse(localStorage.getItem('caiman_pos')) || [
-  {nombre:"Sabritas", precio:20, stock:20},
-  {nombre:"Coca 600ml", precio:20, stock:18},
-  {nombre:"Galletas", precio:15, stock:3},
-  {nombre:"CERVEZA", precio:20, stock:4},
-  {nombre:"ACEITE", precio:35, stock:4}
-];
+let productos = JSON.parse(localStorage.getItem('caiman_pos')) || [{nombre:"Sabritas", precio:20, stock:20},{nombre:"Coca 600ml", precio:20, stock:18},{nombre:"Galletas", precio:15, stock:3},{nombre:"CERVEZA", precio:20, stock:4},{nombre:"ACEITE", precio:35, stock:4}];
 let vendidoHoy = parseInt(localStorage.getItem('caiman_vendido')) || 0;
 let ventas = JSON.parse(localStorage.getItem('caiman_ventas') || '[]');
 let historial = JSON.parse(localStorage.getItem('caiman_historial') || '[]');
+function guardar(){localStorage.setItem('caiman_pos', JSON.stringify(productos));localStorage.setItem('caiman_vendido', vendidoHoy);localStorage.setItem('caiman_ventas', JSON.stringify(ventas));localStorage.setItem('caiman_historial', JSON.stringify(historial));}
+function cerrarCaja(){if(ventas.length===0){alert("No hay ventas");return;}if(confirm("¿Cerrar caja $"+vendidoHoy+"?")){historial.push({fecha:new Date().toLocaleDateString(), total:vendidoHoy, ventas:[...ventas]});vendidoHoy=0;ventas=[];guardar();render();}}
+function exportarInventario(){let csv="Producto,Precio,Stock,Valor,Estado\n";productos.forEach(p=>{let e=p.stock<=4?"FALTA":"OK";csv+=`${p.nombre},${p.precio},${p.stock},${p.precio*p.stock},${e}\n`;});let blob=new Blob(["\uFEFF"+csv],{type:"text/csv"});let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="inventario.xls";a.click();}
+function exportarVentas(){let csv="Fecha,Hora,Producto,Precio\n";historial.forEach(h=>{h.ventas.forEach(v=>{csv+=`${h.fecha},${v.hora},${v.nombre},${v.precio}\n`;});});let blob=new Blob(["\uFEFF"+csv],{type:"text/csv"});let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ventas.xls";a.click();}
+function render(){let filtro=document.getElementById('buscador').value.toLowerCase();let html="";let total=0;let bajos=[];productos.forEach((p,i)=>{let v=p.precio*p.stock;total+=v;if(p.stock<=4)bajos.push(p.nombre+" x"+p.stock);if(p.nombre.toLowerCase().includes(filtro)){let c=p.stock<=4?'bajo':'';let b=p.stock<=4?'<span class="badge-bajo">¡BAJO!</span>':'';html+=`<div class="item ${c}"><span>${p.nombre} x${p.stock} ${b}</span><span>$${v} <button class="btn-vender" onclick="vender(${i})">-1</button><button class="btn-edit" onclick="editar(${i})">✏️</button><button class="btn-del" onclick="borrar(${i})">X</button></span></div>`;}});document.getElementById('lista').innerHTML=html;document.getElementById('total').textContent=total;document.getElementById('vendido').textContent=vendidoHoy;document.getElementById('fecha').textContent=new Date().toLocaleString();document.getElementById('surtir').innerHTML=bajos.length>0?"🚨 FALTA: "+bajos.join(", "):"✅ Todo surtido";if(ventas.length===0){document.getElementById('ticket-lista').innerHTML="Sin ventas...";document.getElementById('ticket-total').textContent="$0";}else{let tHtml="";let tTotal=0;ventas.forEach(v=>{tHtml+=`<div class="ticket-item"><span>${v.hora} - ${v.nombre}</span><span><b>$${v.precio}</b></span></div>`;tTotal+=v.precio;});document.getElementById('ticket-lista').innerHTML=tHtml;document.getElementById('ticket-total').textContent="$"+tTotal;}let conteo={};historial.forEach(h=>{h.ventas.forEach(v=>{conteo[v.nombre]=(conteo[v.nombre]||0)+1;});});ventas.forEach(v=>{conteo[v.nombre]=(conteo[v.nombre]||0)+1;});let lista=Object.keys(conteo);if(lista.length>0){let o=lista.sort((a,b)=>conteo[b]-conteo[a]);document.getElementById('estrella').innerHTML=`⭐ ESTRELLA: <b>${o[0]} (${conteo[o[0]]})</b><br>🐢 MENOS: ${o[o.length-1]}`;}else{document.getElementById('estrella').innerHTML="⭐ Vende algo";}if(historial.length===0){document.getElementById('historial-lista').innerHTML="Aún no hay cierres...";document.getElementById('historial-total').textContent="$0";}else{let hHtml="";let hTotal=0;historial.slice().reverse().forEach(h=>{hHtml+=`<div class="historial-item"><span>${h.fecha}</span><span>$${h.total}</span></div>`;hTotal+=h.total;});document.getElementById('historial-lista').innerHTML=hHtml;document.getElementById('historial-total').textContent="$"+hTotal;}guardar();}
+function vender(i){if(productos[i].stock>0){let hora=new Date().getHours()+":"+String(new Date().getMinutes()).padStart(2,'0');ventas.push({nombre:productos[i].nombre, precio:productos[i].precio, hora:hora});vendidoHoy+=productos[i].precio;productos[i].stock--;render();}}
+function borrar(i){if(confirm("¿Borrar?")){productos.splice(i,1);render();}}
+function editar(i){let np=prompt("Nuevo precio:",productos[i].precio);if(np===null)return;let ns=prompt("Nuevo stock:",productos[i].stock);if(ns===null)return;productos[i].precio=parseInt(np);productos[i].stock=parseInt(ns);render();}
+function agregar(){let n=document.getElementById('nombre').value.trim();let pr=parseInt(document.getElementById('precio').value);let st=parseInt(document.getElementById('stock').value);if(!n||!pr||!st)return;productos.push({nombre:n, precio:pr, stock:st});document.getElementById('nombre').value="";document.getElementById('precio').value="";document.getElementById('stock').value="";render();}
 
-function guardar(){
-  localStorage.setItem('caiman_pos', JSON.stringify(productos));
-  localStorage.setItem('caiman_vendido', vendidoHoy);
-  localStorage.setItem('caiman_ventas', JSON.stringify(ventas));
-  localStorage.setItem('caiman_historial', JSON.stringify(historial));
-}
-function cerrarCaja(){
-  if(ventas.length===0){ alert("No hay ventas hoy"); return; }
-  if(confirm("¿Cerrar caja de $"+vendidoHoy+"? Se guardará en historial")){
-    let fecha = new Date().toLocaleDateString();
-    historial.push({fecha:fecha, total:vendidoHoy, ventas:[...ventas]});
-    vendidoHoy=0; ventas=[]; guardar(); render();
-  }
-}
-
-function exportarInventario(){
-  let csv = "Producto,Precio,Stock,Valor Total,Estado\n";
-  productos.forEach(p=>{
-    let estado = p.stock<=4? "FALTA SURTIR" : "OK";
-    csv+=`${p.nombre},${p.precio},${p.stock},${p.precio*p.stock},${estado}\n`;
-  });
-  csv+=`,,TOTAL:,${productos.reduce((a,b)=>a+b.precio*b.stock,0)},\n`;
-  descargar(csv, "inventario_caiman_"+new Date().toLocaleDateString().replace(/\//g,"-")+".xls");
-}
-function exportarVentas(){
-  let csv = "Fecha,Hora,Producto,Precio\n";
-  historial.forEach(h=>{
-    h.ventas.forEach(v=>{
-      csv+=`${h.fecha},${v.hora},${v.nombre},${v.precio}\n`;
-    });
-    csv+=`${h.fecha},,CIERRE CAJA,${h.total}\n`;
-  });
-  ventas.forEach(v=>{
-    csv+=`${new Date().toLocaleDateString()},${v.hora},${v.nombre},${v.precio}\n`;
-  });
-  csv+=`,,TOTAL HISTORIAL,${historial.reduce((a,b)=>a+b.total,0)+vendidoHoy}\n`;
-  descargar(csv, "ventas_caiman_"+new Date().toLocaleDateString().replace(/\//g,"-")+".xls");
-}
-function descargar(contenido, nombre){
-  let blob = new Blob(["\uFEFF"+contenido], {type: "text/csv;charset=utf-8;"});
-  let url = URL.createObjectURL(blob);
-  let a = document.createElement("a");
-  a.href=url; a.download=nombre; a.click();
-}
-
-function render(){
-  let filtro = document.getElementById('buscador').value.toLowerCase();
-  let html=""; let total=0; let bajos=[];
-  productos.forEach((p,i)=>{
-    let v=p.precio*p.stock; total+=v;
-    if(p.stock<=4) bajos.push(p.nombre+" x"+p.stock);
-    if(p.nombre.toLowerCase().includes(filtro)){
-      let claseBajo = p.stock <= 4? 'bajo' : '';
-      let badge = p.stock <= 4? '<span class="badge-bajo">¡BAJO!</span>' : '';
-      html+=`<div class="item ${claseBajo}"><span>${p.nombre} x${p.stock} ${badge}</span><span>$${v} <button class="btn-vender" onclick="vender(${i})">-1</button><button class="btn-edit" onclick="editar(${i})">✏️</button><button class="btn-del" onclick="borrar(${i})">X</button></span></div>`;
-    }
-  });
-  document.getElementById('lista').innerHTML=html;
-  document.getElementById('total').textContent=total;
-  document.getElementById('vendido').textContent=vendidoHoy;
-  document.getElementById('fecha').textContent = new Date().toLocaleString();
-  document.getElementById('surtir').innerHTML = bajos.length>0? "🚨 FALTA SURTIR ("+bajos.length+"): "+bajos.join(", ") : "✅ Todo surtido";
-
-  if(ventas.length===0){ document.getElementById('ticket-lista').innerHTML="Sin ventas..."; document.getElementById('ticket-total').textContent="$0"; }
-  else {
-    let tHtml=""; let tTotal=0;
-    ventas.forEach(v=>{ tHtml+=`<div class="ticket-item"><span>${v.hora} - ${v.nombre}</span><span><b>$${v.precio}</b></span></div>`; tTotal+=v.precio; });
-    document.getElementById('ticket-lista').innerHTML=tHtml;
-    document.getElementById('ticket-total').textContent="$"+tTotal;
-  }
-
-  let conteo = {};
-  historial.forEach(h=>{ h.ventas.forEach(v=>{ conteo[v.nombre] = (conteo[v.nombre]||0)+1; }); });
-  ventas.forEach(v=>{ conteo[v.nombre] = (conteo[v.nombre]||0)+1; });
-  let listaNombres = Object.keys(conteo);
-  if(listaNombres.length>0){
-    let ordenados = listaNombres.sort((a,b)=>conteo[b]-conteo[a]);
-    document.getElementById('estrella').innerHTML = `⭐ ESTRELLA: <b>${ordenados[0]} (${conteo[ordenados[0]]})</b><br>🐢 MENOS: ${ordenados[ordenados.length-1]} (${conteo[ordenados[ordenados.length-1]]})`;
-  } else {
-    document.getElementById('estrella').innerHTML = "⭐ Vende algo para ver tu estrella";
-  }
-
-  if(historial.length===0){ document.getElementById('historial-lista').innerHTML="Aún no hay cierres..."; document.getElementById('historial-total').textContent="$0"; }
-  else {
-    let hHtml=""; let hTotal=0;
-    historial.slice().reverse().forEach(h=>{ hHtml+=`<div class="historial-item"><span>${h.fecha}</span><span>$${h.total}</span></div>`; hTotal+=h.total; });
-    document.getElementById('historial-lista').innerHTML=hHtml;
-    document.getElementById('historial-total').textContent="$"+hTotal;
-  }
-  guardar();
-}
-function vender(i){
-  if(productos[i].stock>0){
-    let hora = new Date().getHours()+":"+String(new Date().getMinutes()).padStart(2,'0');
-    ventas.push({nombre:productos[i].nombre, precio:productos[i].precio, hora:hora});
-    vendidoHoy+=productos[i].precio; productos[i].stock--; render();
-  }
-}
-function borrar(i){ if(confirm("¿Borrar?")){ productos.splice(i,1); render(); } }
-function editar(i){
-  let np = prompt("Nuevo precio:", productos[i].precio); if(np===null) return;
-  let ns = prompt("Nuevo stock:", productos[i].stock); if(ns===null) return;
- }
-function agregar(){
-  let n=document.getElementById('nombre').value.trim();
-  let pr=parseInt(document.getElementById('precio').value);
-  let st=parseInt(document.getElementById('stock').value);
-  if(!n ||!pr ||!st) return;
-  productos.push({nombre:n, precio:pr, stock:st});
-  document.getElementById('nombre').value=""; document.getElementById('precio').value=""; document.getElementById('stock').value="";
-  render();
-}
-  // --- LOGIN MEJORADO CON CAMBIO DE CONTRASEÑA ---
-function getPassActual(){
-  return localStorage.getItem('caimanPass') || 'caiman2026';
-}
-
-function entrarCaiman(){
-  const pass = document.getElementById('passInput').value.trim();
-  if(pass === getPassActual()){
-    localStorage.setItem('caimanLogueado','si');
-    document.getElementById('pantallaLogin').style.display='none';
-  } else {
-    document.getElementById('errorLogin').style.display='block';
-  }
-}
-
-function cambiarPass(){
-  const nueva = document.getElementById('nuevaPass').value.trim();
-  if(nueva.length < 4){
-    alert("Mínimo 4 letras paree");
-    return;
-  }
-  localStorage.setItem('caimanPass', nueva);
-  document.getElementById('tipPass').textContent = "Nueva contraseña guardada: " + nueva;
-  document.getElementById('nuevaPass').value = "";
-  alert("¡Contraseña cambiada a: " + nueva + " !");
-}
-
-if(localStorage.getItem('caimanLogueado') === 'si'){
-  document.getElementById('pantallaLogin').style.display='none';
-}
-function salirCaiman(){
-  localStorage.removeItem('caimanLogueado');
-  location.reload();
-}
-
-// Mostrar la pass actual en el tip
-document.getElementById('tipPass').textContent = "Contraseña actual: " + getPassActual();
+// LOGIN
+function getPassActual(){return localStorage.getItem('caimanPass') || 'caiman2026';}
+function entrarCaiman(){let pass=document.getElementById('passInput').value.trim();if(pass===getPassActual()){localStorage.setItem('caimanLogueado','si');document.getElementById('pantallaLogin').style.display='none';}else{document.getElementById('errorLogin').style.display='block';}}
+function cambiarPass(){let nueva=document.getElementById('nuevaPass').value.trim();if(nueva.length<4){alert("Minimo 4");return;}localStorage.setItem('caimanPass',nueva);document.getElementById('tipPass').textContent="Guardada: "+nueva;document.getElementById('nuevaPass').value="";alert("Cambiada a: "+nueva);}
+function salirCaiman(){localStorage.removeItem('caimanLogueado');location.reload();}
+if(localStorage.getItem('caimanLogueado')==='si'){document.getElementById('pantallaLogin').style.display='none';}
+document.getElementById('tipPass').textContent="Actual: "+getPassActual();
+render();
 </script>
 </body>
 </html>
