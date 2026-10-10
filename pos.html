@@ -1,11 +1,79 @@
-title>
+<!DOCTYPE html>
+<html>
+<head>
+<title>CaimanPOS - Día 12</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px;max-width:500px;margin:auto}
 .item{display:flex;justify-content:space-between;align-items:center;background:#141414;padding:12px;margin:8px 0;border-radius:10px;border-left:4px solid #a855f7}
-.total{font-size:32px;font-weight:900;color:#a855f7;margin-top:20px}
+.total{font-size:28px;font-weight:900;color:#a855f7;margin-top:15px}
+.vendido{font-size:22px;font-weight:900;color:#22c55e;background:#0f1a12;padding:12px;border-radius:10px;margin-top:15px;text-align:center;border:1px solid #22c55e}
 input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;color:#fff;margin:5px;width:28%}
 .btn-add{padding:12px;background:#a855f7;color:#fff;border:none;border-radius:10px;font-weight:900;width:100%;margin-top:10px}
 .btn-vender{background:#22c55e;color:#000;border:none;padding:6px 12px;border-radius:6px;font-weight:900;margin-right:5px}
 .btn-del{background:#ff1a4a;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-weight:900}
-#error{display:none;background:#
+#error{display:none;background:#ff1a4a;color:white;padding:10px;border-radius:8px;margin-top:10px;text-align:center}
+</style>
+</head>
+<body>
+<h1>CAIMAN POS - DÍA 12 🧾</h1>
+<input id="nombre" placeholder="Producto">
+<input id="precio" type="number" placeholder="Precio $">
+<input id="stock" type="number" placeholder="Stock">
+<button class="btn-add" onclick="agregar()">+ AGREGAR PRODUCTO</button>
+<div id="error"></div>
+<div id="lista" style="margin-top:20px"></div>
+<div class="total">INVENTARIO: $<span id="total">0</span></div>
+<div class="vendido">VENDIDO HOY: $<span id="vendido">0</span> <button onclick="cerrarCaja()" style="margin-left:10px;background:#fff;color:#000;border:none;padding:4px 8px;border-radius:5px;font-size:12px">CERRAR CAJA</button></div>
+<button onclick="resetear()" style="margin-top:20px;background:#222;color:#777;border:none;padding:8px;border-radius:6px;width:100%">Resetear tienda</button>
+
+<script>
+let guardado = JSON.parse(localStorage.getItem('caiman_pos'));
+let productos = (guardado && guardado.length > 0)? guardado : [
+  {nombre:"Sabritas", precio:18, stock:20},
+  {nombre:"Coca 600ml", precio:20, stock:5},
+  {nombre:"Galletas", precio:15, stock:8}
+];
+let vendidoHoy = parseInt(localStorage.getItem('caiman_vendido')) || 0;
+
+function guardar(){ 
+  localStorage.setItem('caiman_pos', JSON.stringify(productos)); 
+  localStorage.setItem('caiman_vendido', vendidoHoy);
+}
+function resetear(){ localStorage.clear(); location.reload(); }
+function cerrarCaja(){ if(confirm("¿Cerrar caja? Se reinicia a $0")){ vendidoHoy=0; guardar(); document.getElementById('vendido').textContent=0; } }
+
+function render(){
+  let html=""; let total=0;
+  productos.forEach((p,i)=>{
+    let v=p.precio*p.stock; total+=v;
+    html+=`<div class="item"><span>${p.nombre} x${p.stock}</span><span>$${v} <button class="btn-vender" onclick="vender(${i})">-1</button><button class="btn-del" onclick="borrar(${i})">X</button></span></div>`;
+  });
+  document.getElementById('lista').innerHTML=html;
+  document.getElementById('total').textContent=total;
+  document.getElementById('vendido').textContent=vendidoHoy;
+  guardar();
+}
+function vender(i){ 
+  if(productos[i].stock>0){ 
+    vendidoHoy += productos[i].precio; // AQUÍ ESTÁ LA MAGIA DEL DÍA 12
+    productos[i].stock--; 
+    render(); 
+  } 
+}
+function borrar(i){ productos.splice(i,1); render(); }
+function agregar(){
+  let n=document.getElementById('nombre').value.trim();
+  let pr=parseInt(document.getElementById('precio').value);
+  let st=parseInt(document.getElementById('stock').value);
+  let e=document.getElementById('error');
+  if(!n ||!pr ||!st){ e.textContent="⚠️ Llena todo"; e.style.display="block"; return; }
+  e.style.display="none";
+  productos.push({nombre:n, precio:pr, stock:st});
+  document.getElementById('nombre').value=""; document.getElementById('precio').value=""; document.getElementById('stock').value="";
+  render();
+}
+render();
+</script>
+</body>
+</html>
