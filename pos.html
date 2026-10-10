@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>CaimanPOS - Día 13</title>
+<title>CaimanPOS - Día 14</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px;max-width:500px;margin:auto}
@@ -11,13 +11,14 @@ body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px;max-width
 .vendido{font-size:20px;font-weight:900;color:#22c55e;background:#0f1a12;padding:12px;border-radius:10px;margin-top:15px;text-align:center;border:1px solid #22c55e}
 input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;color:#fff;margin:5px;width:28%}
 .btn-add{padding:12px;background:#a855f7;color:#fff;border:none;border-radius:10px;font-weight:900;width:100%;margin-top:10px}
-.btn-vender{background:#22c55e;color:#000;border:none;padding:6px 12px;border-radius:6px;font-weight:900;margin-right:5px}
-.btn-del{background:#ff1a4a;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-weight:900}
+.btn-vender{background:#22c55e;color:#000;border:none;padding:5px 10px;border-radius:6px;font-weight:900;margin-right:4px}
+.btn-edit{background:#3b82f6;color:#fff;border:none;padding:5px 10px;border-radius:6px;font-weight:900;margin-right:4px}
+.btn-del{background:#ff1a4a;color:#fff;border:none;padding:5px 10px;border-radius:6px;font-weight:900}
 #error{display:none;background:#ff1a4a;color:white;padding:10px;border-radius:8px;margin-top:10px;text-align:center}
 </style>
 </head>
 <body>
-<h1>CAIMAN POS - DÍA 13 🔍</h1>
+<h1>CAIMAN POS - DÍA 14 ✏️</h1>
 <input type="text" id="buscador" class="buscador" placeholder="🔍 Buscar producto..." oninput="render()">
 <input id="nombre" placeholder="Producto">
 <input id="precio" type="number" placeholder="Precio $">
@@ -36,7 +37,6 @@ let productos = (guardado && guardado.length > 0)? guardado : [
   {nombre:"Galletas", precio:15, stock:8}
 ];
 let vendidoHoy = parseInt(localStorage.getItem('caiman_vendido')) || 0;
-
 function guardar(){ localStorage.setItem('caiman_pos', JSON.stringify(productos)); localStorage.setItem('caiman_vendido', vendidoHoy); }
 function cerrarCaja(){ if(confirm("¿Cerrar caja?")){ vendidoHoy=0; guardar(); document.getElementById('vendido').textContent=0; } }
 
@@ -45,9 +45,8 @@ function render(){
   let html=""; let total=0;
   productos.forEach((p,i)=>{
     let v=p.precio*p.stock; total+=v;
-    // MAGIA DÍA 13: si el nombre incluye lo que buscaste, muéstralo
     if(p.nombre.toLowerCase().includes(filtro)){
-      html+=`<div class="item"><span>${p.nombre} x${p.stock}</span><span>$${v} <button class="btn-vender" onclick="vender(${i})">-1</button><button class="btn-del" onclick="borrar(${i})">X</button></span></div>`;
+      html+=`<div class="item"><span>${p.nombre} x${p.stock}</span><span>$${v} <button class="btn-vender" onclick="vender(${i})">-1</button><button class="btn-edit" onclick="editar(${i})">✏️</button><button class="btn-del" onclick="borrar(${i})">X</button></span></div>`;
     }
   });
   document.getElementById('lista').innerHTML=html;
@@ -56,7 +55,19 @@ function render(){
   guardar();
 }
 function vender(i){ if(productos[i].stock>0){ vendidoHoy+=productos[i].precio; productos[i].stock--; render(); } }
-function borrar(i){ productos.splice(i,1); render(); }
+function borrar(i){ if(confirm("¿Borrar?")){ productos.splice(i,1); render(); } }
+
+// DÍA 14 - LA MAGIA
+function editar(i){
+  let nuevoPrecio = prompt("Nuevo precio para "+productos[i].nombre+":", productos[i].precio);
+  if(nuevoPrecio===null) return;
+  let nuevoStock = prompt("Nuevo stock:", productos[i].stock);
+  if(nuevoStock===null) return;
+  productos[i].precio = parseInt(nuevoPrecio);
+  productos[i].stock = parseInt(nuevoStock);
+  render();
+}
+
 function agregar(){
   let n=document.getElementById('nombre').value.trim();
   let pr=parseInt(document.getElementById('precio').value);
