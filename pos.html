@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>CaimanPOS - Día 8 PRO</title>
+<title>CaimanPOS - Día 9</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px;max-width:500px;margin:auto}
@@ -11,30 +11,32 @@ input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;co
 input:focus{border-color:#a855f7;outline:none}
 button{padding:12px 20px;background:#a855f7;color:#fff;border:none;border-radius:10px;font-weight:900;cursor:pointer;margin-top:10px;width:100%;font-size:16px}
 button:active{transform:scale(0.98)}
-#error{display:none;background:#ff1a4a;color:white;padding:12px;border-radius:8px;margin-top:12px;text-align:center;font-weight:bold;animation:shake 0.3s}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+#error{display:none;background:#ff1a4a;color:white;padding:12px;border-radius:8px;margin-top:12px;text-align:center;font-weight:bold}
 </style>
 </head>
 <body>
-<h1>CAIMAN POS - DÍA 8 PRO</h1>
+<h1>CAIMAN POS - DÍA 9 💾</h1>
 
 <input id="nombre" placeholder="Producto">
 <input id="precio" type="number" placeholder="Precio $">
 <input id="stock" type="number" placeholder="Stock">
 
 <button onclick="agregar()">+ AGREGAR PRODUCTO</button>
-
 <div id="error"></div>
-
 <div id="lista" style="margin-top:20px"></div>
 <div class="total">TOTAL: $<span id="total">0</span></div>
 
 <script>
-let productos = [
+// DÍA 9: Cargar de localStorage si existe, si no, usar los 3 default
+let productos = JSON.parse(localStorage.getItem('caiman_pos')) || [
   {nombre:"Sabritas", precio:18, stock:20},
   {nombre:"Coca 600ml", precio:20, stock:5},
   {nombre:"Galletas", precio:15, stock:8}
 ];
+
+function guardar(){
+  localStorage.setItem('caiman_pos', JSON.stringify(productos));
+}
 
 function render(){
   let html=""; let total=0;
@@ -44,6 +46,7 @@ function render(){
   });
   document.getElementById('lista').innerHTML=html;
   document.getElementById('total').textContent=total;
+  guardar(); // <-- Cada que renderiza, guarda
 }
 
 function agregar(){
@@ -54,15 +57,8 @@ function agregar(){
   
   if(!n || !pr || !st){
     errorDiv.textContent="⚠️ Completa nombre, precio y stock";
-    errorDiv.style.display="block";
-    return;
+    errorDiv.style.display="block"; return;
   }
-  if(pr<=0 || st<=0){
-    errorDiv.textContent="⚠️ Precio y stock deben ser mayor a 0";
-    errorDiv.style.display="block";
-    return;
-  }
-
   errorDiv.style.display="none";
   productos.push({nombre:n, precio:pr, stock:st});
   render();
