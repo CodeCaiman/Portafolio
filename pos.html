@@ -40,6 +40,7 @@ function render(){
   productos.forEach((p,i)=>{
     let v=p.precio*p.stock; total+=v;
     html+=`<div class="item"><span>${p.nombre} x${p.stock}</span><span>$${v} <button class="btn-del" onclick="borrar(${i})">X</button></span></div>`;
+    <button onclick="vender(${i})">-1</button>
   });
   document.getElementById('lista').innerHTML=html;
   document.getElementById('total').textContent=total;
