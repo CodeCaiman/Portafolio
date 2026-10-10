@@ -1,22 +1,30 @@
 <!DOCTYPE html>
 <html>
-<head><title>CaimanPOS - Día 8</title>
+<head>
+<title>CaimanPOS - Día 8 PRO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px;max-width:500px;margin:auto}
-.item{display:flex;justify-content:space-between;background:#141414;padding:12px;margin:8px 0;border-radius:10px}
+.item{display:flex;justify-content:space-between;background:#141414;padding:12px;margin:8px 0;border-radius:10px;border-left:4px solid #a855f7}
 .total{font-size:32px;font-weight:900;color:#a855f7;margin-top:20px}
-input{padding:10px;border-radius:8px;border:none;margin:5px 0;width:30%}
-button{padding:12px 20px;background:#a855f7;color:#fff;border:none;border-radius:10px;font-weight:900;cursor:pointer;margin-top:10px;width:100%}
+input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;color:#fff;margin:5px 0;width:28%}
+input:focus{border-color:#a855f7;outline:none}
+button{padding:12px 20px;background:#a855f7;color:#fff;border:none;border-radius:10px;font-weight:900;cursor:pointer;margin-top:10px;width:100%;font-size:16px}
 button:active{transform:scale(0.98)}
+#error{display:none;background:#ff1a4a;color:white;padding:12px;border-radius:8px;margin-top:12px;text-align:center;font-weight:bold;animation:shake 0.3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 </style>
 </head>
 <body>
-<h1>CAIMAN POS - DÍA 8</h1>
+<h1>CAIMAN POS - DÍA 8 PRO</h1>
 
 <input id="nombre" placeholder="Producto">
-<input id="precio" type="number" placeholder="Precio">
+<input id="precio" type="number" placeholder="Precio $">
 <input id="stock" type="number" placeholder="Stock">
+
 <button onclick="agregar()">+ AGREGAR PRODUCTO</button>
+
+<div id="error"></div>
 
 <div id="lista" style="margin-top:20px"></div>
 <div class="total">TOTAL: $<span id="total">0</span></div>
@@ -39,16 +47,30 @@ function render(){
 }
 
 function agregar(){
-  let n=document.getElementById('nombre').value;
+  let n=document.getElementById('nombre').value.trim();
   let pr=parseInt(document.getElementById('precio').value);
   let st=parseInt(document.getElementById('stock').value);
-  if(!n || !pr || !st) return alert("Llena todo paree");
+  let errorDiv=document.getElementById('error');
+  
+  if(!n || !pr || !st){
+    errorDiv.textContent="⚠️ Completa nombre, precio y stock";
+    errorDiv.style.display="block";
+    return;
+  }
+  if(pr<=0 || st<=0){
+    errorDiv.textContent="⚠️ Precio y stock deben ser mayor a 0";
+    errorDiv.style.display="block";
+    return;
+  }
+
+  errorDiv.style.display="none";
   productos.push({nombre:n, precio:pr, stock:st});
   render();
   document.getElementById('nombre').value="";
   document.getElementById('precio').value="";
   document.getElementById('stock').value="";
 }
+
 render();
 </script>
 </body>
