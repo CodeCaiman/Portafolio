@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head><title>CaimanPOS - Prueba</title>
+<style>
+body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:30px}
+.item{display:flex;justify-content:space-between;background:#141414;padding:12px;margin:8px 0;border-radius:10px}
+.total{font-size:32px;font-weight:900;color:#a855f7;margin-top:20px}
+</style>
+</head>
+<body>
+<h1>CAIMAN POS - DÍA 7</h1>
+<div id="lista"></div>
+<div class="total">TOTAL: $<span id="total">0</span></div>
+
+<script>
+let productos = [
+  {nombre:"Sabritas", precio:18, stock:10},
+  {nombre:"Coca 600ml", precio:20, stock:5},
+  {nombre:"Galletas", precio:15, stock:8}
+];
+
+let html = "";
+let totalInventario = 0;
+
+productos.forEach(p => {
+  let valor = p.precio * p.stock;
+  totalInventario += valor;
+  html += `<div class="item"><span>${p.nombre} x${p.stock}</span><span>$${valor}</span></div>`;
+});
+
+document.getElementById('lista').innerHTML = html;
+document.getElementById('total').textContent = totalInventario;
+</script>
+</body>
+</html>
