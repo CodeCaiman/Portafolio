@@ -52,6 +52,7 @@ input{padding:12px;border-radius:8px;border:2px solid #222;background:#141414;co
 <input id="nombre" placeholder="Producto"><input id="precio" type="number" placeholder="$"><input id="stock" type="number" placeholder="Stock">
 <input id="foto" placeholder="Link foto (opcional)" style="width:97%; margin-top:8px; box-sizing:border-box;">
 <button class="btn-add" onclick="agregar()">+ AGREGAR PRODUCTO</button>
+<button onclick="if(confirm('¿Borrar todo y poner fotos?')){localStorage.clear(); location.reload();}" style="width:100%;padding:10px;background:#ff1a4a;color:#fff;border:none;border-radius:10px;margin-top:5px;font-weight:900">🔄 RESET CON FOTOS</button>
 <div id="lista" style="margin-top:20px"></div>
 <div class="total">INVENTARIO: $<span id="total">0</span></div>
 <div class="vendido">VENDIDO HOY: $<span id="vendido">0</span> <button onclick="cerrarCaja()" style="margin-left:10px;background:#fff;color:#000;border:none;padding:4px 8px;border-radius:5px;font-size:12px">CERRAR CAJA</button></div>
